@@ -22,7 +22,7 @@ var (
 )
 
 func main() {
-	Regex, _ = regexp.Compile("[0-9]{1,6}")
+	Regex, _ = regexp.Compile("[0-9]{5,6}")
 	flag.StringVar(&Token, "t", "", "Bot Token")
 	flag.StringVar(&Channel, "c", "", "Output Channel")
 	flag.Parse()
