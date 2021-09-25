@@ -15,14 +15,16 @@ import (
 )
 
 var (
-	Token   string
-	Channel string
-	Client  *api.Client
-	Regex   *regexp.Regexp
+	Token              string
+	Channel            string
+	Client             *api.Client
+	GetNumberRegex     *regexp.Regexp
+	RemoveMentionRegex *regexp.Regexp
 )
 
 func main() {
-	Regex, _ = regexp.Compile("[0-9]{5,6}")
+	GetNumberRegex, _ = regexp.Compile("[0-9]{5,6}")
+	RemoveMentionRegex, _ = regexp.Compile("<(@&?!?|#)[0-9]+?>")
 	flag.StringVar(&Token, "t", "", "Bot Token")
 	flag.StringVar(&Channel, "c", "", "Output Channel")
 	flag.Parse()
@@ -53,7 +55,8 @@ func main() {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// find doujin
-	match := Regex.FindString(m.Content)
+	content := RemoveMentionRegex.ReplaceAllString(m.Content, "")
+	match := GetNumberRegex.FindString(content)
 	id, _ := strconv.ParseInt(match, 10, 32)
 	doujin, err := Client.ByID(int(id))
 	if err != nil {
